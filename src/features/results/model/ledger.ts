@@ -10,7 +10,7 @@ export function applyEvents(doc: GameDoc, events: FrameEvents): void {
 }
 export function makeRecord(doc: GameDoc): RunRecord {
   return {
-    id: `${doc.initialSeed}-${Date.now().toString(36)}`,
+    id: doc.recordId ?? `${doc.initialSeed}-${Date.now().toString(36)}`,
     duration: doc.time,
     wave: doc.wave,
     level: doc.level,
@@ -18,5 +18,7 @@ export function makeRecord(doc: GameDoc): RunRecord {
     damage: Math.round(doc.stats.damage),
     weapons: doc.weapons.map((w) => `${w.id}:${w.level}`),
     victory: doc.victory,
+    // 实时行动均伴随输入录制；旧档案反序列化时没有该字段则按无回放处理。
+    hasReplay: true,
   };
 }

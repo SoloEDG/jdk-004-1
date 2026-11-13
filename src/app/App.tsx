@@ -17,6 +17,8 @@ import { WavePanel } from "../features/waves";
 import { ArsenalPanel } from "../features/arsenal";
 import { UpgradeDialog, ExperienceBar } from "../features/progression";
 import { StatsPanel, ResultDialog, HistoryPanel } from "../features/results";
+import { ReplayViewer, loadReplays } from "../features/replay";
+import type { ReplayFile } from "../shared/types";
 import { formatTime } from "../shared/math";
 import { useAudio } from "./useAudio";
 export function App() {
@@ -24,6 +26,7 @@ export function App() {
   const d = game.current;
   const [history, setHistory] = useState(false);
   const [help, setHelp] = useState(false);
+  const [replay, setReplay] = useState<ReplayFile | null>(null);
   const { muted, setMuted } = useAudio(d);
   const openHistory = () => {
     if (d.phase === "playing") d.phase = "paused";
@@ -231,8 +234,19 @@ export function App() {
         </footer>
       </main>
       {history && (
-        <HistoryPanel records={d.records} close={() => setHistory(false)} />
+        <HistoryPanel
+          records={d.records}
+          replays={loadReplays()}
+          close={() => setHistory(false)}
+          onPlay={(file) => {
+            setHistory(false);
+            setReplay(file);
+          }}
+        />
       )}{" "}
+      {replay && (
+        <ReplayViewer file={replay} close={() => setReplay(null)} />
+      )}
       {help && (
         <div className="overlay help-overlay">
           <div className="history-dialog">

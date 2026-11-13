@@ -9,6 +9,8 @@ export function stepResults(doc: GameDoc, events: FrameEvents): void {
   doc.phase = "ended";
   doc.choices = [];
   doc.notice = doc.victory ? "撤离成功 · 信号保全" : "信号中断 · 再次连接";
+  // 回放重放的结算只能用于画面与校验，绝不新增真实战绩或写入档案。
+  if (doc.replay) return;
   doc.records = [makeRecord(doc), ...doc.records].slice(0, 20);
   saveRecords(doc.records);
 }

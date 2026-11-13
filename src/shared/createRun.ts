@@ -1,5 +1,9 @@
 import type { GameDoc, RunRecord } from "./types";
-export function createRun(seed = 204004, records: RunRecord[] = []): GameDoc {
+export function createRun(
+  seed = 204004,
+  records: RunRecord[] = [],
+  replay = false,
+): GameDoc {
   return {
     version: 1,
     seed,
@@ -39,5 +43,12 @@ export function createRun(seed = 204004, records: RunRecord[] = []): GameDoc {
     records,
     notice: "等待接入战场",
     victory: false,
+    replay,
+    recordId: replay ? undefined : makeRunId(seed),
   };
+}
+
+/** 生成本局稳定的战绩 id，录制器、战绩与回放共享同一个 id。 */
+export function makeRunId(seed: number): string {
+  return `${seed}-${Date.now().toString(36)}`;
 }
